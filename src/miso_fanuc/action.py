@@ -11,27 +11,12 @@ from control_msgs.msg import \
     FollowJointTrajectoryAction, \
     FollowJointTrajectoryResult
 from miso_fanuc.status import FanucStatusMonitor
-from miso_msgs.msg import PneumaticsAction
-from miso_msgs.srv import SetFanucSig, SetJointSetpoint
-from miso_fanuc.tcp import CallPacket, TcpTalker
-from miso_fanuc.tp import make_trajectory_program
+from miso_msgs.srv import SetJointSetpoint
 import rospy
 
 
-class PneumaticPosition(Enum):
-    """Contains the two different states for pneumatics
-    """
-    OPEN = 1
-    CLOSE = 2
-
 class ActionServer(object):
     """Hosts the actionlib interface for the FANUC robot.
-
-    The actionlib interface is the same as used by ros_control. The
-    driver stack works by creating a TP program containing the desired
-    points and uploading this program to the FANUC controller through
-    FTP. An execution request is then sent using a custom packet over
-    TCP.
     """
 
     __result = FollowJointTrajectoryResult()
@@ -71,17 +56,6 @@ class ActionServer(object):
 
             traj_runner.execute_trajectory(goal)
             self.__trajectory_asrv.set_succeeded()
-
-            # rate = rospy.Rate(100)
-            # while not rospy.is_shutdown():
-            #     if self.__trajectory_asrv.is_preempt_requested():
-            #         self.__trajectory_asrv.set_preempted()
-            #         break
-            #     elif self.__status_monitor.finished:
-            #         self.__trajectory_asrv.set_succeeded()
-            #         break
-            #     else:
-            #         rate.sleep()
         finally:
             self.__robot_comm_lock.release()
 

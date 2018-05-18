@@ -13,11 +13,7 @@ from miso_fanuc.hmi_engine import AlarmInterface, \
                                   REGISTER_COUNT
 from miso_fanuc.tp import Point
 from miso_msgs.msg import FanucStatus
-from miso_msgs.srv import ResetFanucAck, \
-                          ResetFanucAckResponse, \
-                          SetFanucSig, \
-                          SetFanucSigResponse, \
-                          SetJointSetpoint, \
+from miso_msgs.srv import SetJointSetpoint, \
                           SetJointSetpointResponse
 from sensor_msgs.msg import JointState
 import rospy

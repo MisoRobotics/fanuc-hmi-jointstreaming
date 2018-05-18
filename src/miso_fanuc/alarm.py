@@ -10,7 +10,6 @@ import errno
 import numpy as np
 import time
 
-from miso_fanuc.tcp import TcpTalker
 import rospy
 
 
@@ -18,7 +17,7 @@ ALARM_SIZE = 100
 
 
 class FanucAlarm(object):
-    """Parses an array retrieved via SRTP that represents an alarm
+    """Parses an alarm retrieved via HMI.
     """
     def __init__(self, data):
         assert len(data) == ALARM_SIZE, 'Alarm is not correct size'
@@ -44,6 +43,10 @@ class FanucAlarm(object):
                                           self.minute,
                                           self.second)
         except ValueError:
+            # For some of the HMI alarm var_name's,
+            # a lack of an alarm leads to a time field
+            # that is all 0's which is not parsed
+            # by datetime.datetime().
             self.time = None
 
     @property
@@ -71,6 +74,8 @@ class FanucAlarm(object):
         returns. The bytes in each short are out of order,
         but the shorts are in order.
         """
+        #TODO(WHW): Use the utility functions defined at the bottom
+        # of hmi_engine.py
         alm_msg = ''
         for chars in data:
             char1 = chars & 0xFF

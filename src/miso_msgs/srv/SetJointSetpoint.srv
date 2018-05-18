@@ -1,0 +1,4 @@
+## This command is used to set the joint setpoint
+float32[] joints
+---
+bool success

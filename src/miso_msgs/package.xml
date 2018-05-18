@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>miso_msgs</name>
+  <version>1.0.0</version>
+  <description>Defines custom messages and services</description>
+  <maintainer email="wwerst@misorobotics.com">Will Werst</maintainer>
+  <maintainer email="rsinnet@misorobotics.com.com">Ryan Sinnet</maintainer>
+  <license>BSD</license>
+  <url type="repository">https://github.com/MisoRobotics/fanuc-hmi-jointstreaming.git</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>actionlib_msgs</depend>
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>uuid_msgs</depend>
+
+  <build_depend>message_generation</build_depend>
+
+  <exec_depend>message_runtime</exec_depend>
+
+  <export>
+    <architecture_independent/>
+  </export>
+</package>
