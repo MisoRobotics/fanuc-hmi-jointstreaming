@@ -93,7 +93,7 @@ class TrajRunner(object):
             self.send_setpoint(joints=np.array(setpoint))
             loop_delta_time = time.time() - loop_start_time
             loop_start_time += loop_delta_time
-            if loop_delta_time > 0.1:
+            if loop_delta_time > 0.05:
                 rospy.logwarn('Control loop is running slow (loop time %f seconds', loop_delta_time)
             param_time += self.exec_rate*loop_delta_time
             self.__update_exec_rate()

@@ -60,6 +60,7 @@ def main():
     try:
         client = SimpleActionClient('/miso_fanuc_driver/follow_joint_trajectory',
                                     FollowJointTrajectoryAction)
+        client.wait_for_server()
         goal = make_goal(go_home_trajectory())
         rospy.loginfo('Sending robot to home position %s', str(goal))
         client.send_goal(goal)
