@@ -1,10 +1,3 @@
-class Registers(object):
-    """Contains the indexes of the fanuc registers
-    used in the fanuc driver stack
-    """
-    SIG = 6
-    ACK = 7
-
 class DigitalIO(object):
     """Contains the indexes of the fanuc digital IO
     used in the fanuc driver stack

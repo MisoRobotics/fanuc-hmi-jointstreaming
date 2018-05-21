@@ -74,6 +74,7 @@ class TrajRunner(object):
         param_time = 0.
         points = goal.trajectory.points
         def get_setpoint():
+            # TODO(WHW): Improve efficiency of this linear search...
             start_point = points[0]
             end_point = points[-1]
             for i in range(len(points)):
