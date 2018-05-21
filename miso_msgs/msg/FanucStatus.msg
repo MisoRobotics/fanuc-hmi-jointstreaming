@@ -1,0 +1,6 @@
+Header header
+
+bool slowdown_zone_1_active
+bool slowdown_zone_2_active
+bool danger_zone_active
+bool pneumatic_pressure_low

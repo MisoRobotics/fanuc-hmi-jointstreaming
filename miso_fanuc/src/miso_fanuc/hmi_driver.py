@@ -67,10 +67,6 @@ class HmiDriver(object):
             '/fanuc_status', FanucStatus, queue_size=1)
         self.__jpub = rospy.Publisher(
             '/joint_states', JointState, queue_size=1)
-        self.__reset_ack_srv = rospy.Service(
-            '/reset_fanuc_ack', ResetFanucAck, self.__reset_fanuc_ack)
-        self.__set_sig_srv = rospy.Service(
-            '/set_fanuc_sig', SetFanucSig, self.__set_fanuc_sig)
         self.__set_joint_srv = rospy.Service(
             '/send_setpoint', SetJointSetpoint, self.__set_joint_setpoint)
 
@@ -147,20 +143,15 @@ class HmiDriver(object):
         """Gets the fanuc status message
         """
         with self.__config_lock:
-            sig_reg = self.__register_interface.read_register(Registers.SIG)
-            ack_reg = self.__register_interface.read_register(Registers.ACK)
             pneumatic_pressure_low = self.__io_interface.read_digital_input(DigitalIO.PNEUMGOOD) == 0
             slowdown_zone_1_active = self.__io_interface.read_digital_input(DigitalIO.WARN1) == 0
             slowdown_zone_2_active = self.__io_interface.read_digital_input(DigitalIO.WARN2) == 0
             danger_zone_active = self.__io_interface.read_digital_input(DigitalIO.SIR1) == 0
         msg = FanucStatus(
-            program_running=(sig_reg != 0),
             slowdown_zone_1_active=slowdown_zone_1_active,
             slowdown_zone_2_active=slowdown_zone_2_active,
             danger_zone_active=danger_zone_active,
-            pneumatic_pressure_low=pneumatic_pressure_low,
-            sig_reg=sig_reg,
-            ack_reg=ack_reg)
+            pneumatic_pressure_low=pneumatic_pressure_low)
         msg.header.stamp = rospy.Time.now()
         return msg
 
@@ -176,35 +167,6 @@ class HmiDriver(object):
         msg.name = ['joint_%d' % (i + 1) for i in range(NO_JOINTS)]
         msg.position = joints
         return msg
-
-    def __reset_fanuc_ack(self, req):
-        """Service callback to reset fanuc ack register,
-        and read back and confirm the signal register and ack
-        register are both 0.
-        """
-        res = ResetFanucAckResponse()
-        res.success = False
-        with self.__config_lock:
-            self.__register_interface.write_register(Registers.ACK, 0)
-            read_attempts = 10
-            rate = rospy.Rate(10)
-            for i in range(read_attempts):
-                if self.__register_interface.read_register(Registers.ACK) == 0:
-                    res.success = True
-                    break
-                rate.sleep()
-
-        return res
-
-    def __set_fanuc_sig(self, req):
-        """Service callback to set fanuc signaling register
-        """
-        res = SetFanucSigResponse()
-        res.success = False
-        with self.__config_lock:
-            self.__register_interface.write_register(Registers.SIG, req.sig_value)
-        res.success = True
-        return res
 
     def __set_joint_setpoint(self, req):
         """

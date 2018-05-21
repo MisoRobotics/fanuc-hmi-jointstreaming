@@ -64,4 +64,4 @@ class FanucStatusMonitor(object):
     def __joint_callback(self, msg):
         """Handles joint position updates
         """
-        self.__joints = msg.joints
+        self.__joints = msg.position

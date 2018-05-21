@@ -24,17 +24,14 @@ class ActionServer(object):
     def __init__(self,
                  traj_topic,
                  server_address,
-                 sim,
                  buffer_size=5):
         assert isinstance(traj_topic, str)
         assert isinstance(server_address, str)
-        assert isinstance(sim, bool)
         assert isinstance(buffer_size, int)
         assert buffer_size > 0
         assert buffer_size < 10
 
         self.__robot_comm_lock = threading.Lock()
-        self.__sim = sim
         self.__traj_topic = traj_topic
         self.__status_monitor = FanucStatusMonitor()
 
@@ -48,6 +45,7 @@ class ActionServer(object):
         self.__trajectory_asrv.start()
 
     def __execute_traj_callback(self, goal):
+        rospy.loginfo('Executing trajectory')
         if rospy.is_shutdown():
             return
         self.__robot_comm_lock.acquire()

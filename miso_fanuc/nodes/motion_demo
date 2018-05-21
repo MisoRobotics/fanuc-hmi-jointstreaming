@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+
+from actionlib import SimpleActionClient
+from control_msgs.msg import FollowJointTrajectoryAction, \
+                             FollowJointTrajectoryGoal
+from trajectory_msgs.msg import JointTrajectory, \
+                                JointTrajectoryPoint
+from miso_fanuc.status import FanucStatusMonitor
+import rospy
+
+
+def go_home_trajectory(time=10.):
+    status = FanucStatusMonitor()
+    traj = JointTrajectory()
+    start_point = JointTrajectoryPoint()
+    start_point.positions = status.joints
+    start_point.time_from_start = rospy.Duration(0.)
+    traj.points.append(start_point)
+    end_point = JointTrajectoryPoint()
+    end_point.positions = [[0.,
+                            0.,
+                            0.,
+                            0.,
+                            0.,
+                            0.]]
+    end_point.time_from_start = rospy.Duration(time)
+    traj.points.append(end_point)
+    return traj
+
+def generate_trajectory(length=10., period=2.):
+    pass
+
+def make_goal(joint_trajectory):
+    goal = FollowJointTrajectoryGoal()
+    joint_trajectory.header.stamp = rospy.Time.now()
+    goal.trajectory = joint_trajectory
+
+def main():
+    rospy.init_node('motion_demo')
+    rospy.loginfo('Starting %s', rospy.get_name())
+    try:
+        client = SimpleActionClient('/miso_fanuc_driver/follow_joint_trajectory',
+                                    FollowJointTrajectoryAction)
+        goal = make_goal(go_home_trajectory())
+        client.send_goal(goal)
+        client.wait_for_result()
+    except:
+        if not rospy.is_shutdown():
+            raise
+
+if __name__ == '__main__':
+    main()
