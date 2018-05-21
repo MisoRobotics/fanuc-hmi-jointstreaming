@@ -1,9 +1,11 @@
 import numpy as np
 import socket
 
+import rospy
+from sensor_msgs.msg import JointState
+
 from miso_fanuc import Registers
 from miso_msgs.msg import FanucStatus
-import rospy
 
 
 class FanucStatusMonitor(object):
@@ -13,15 +15,18 @@ class FanucStatusMonitor(object):
     """
     DEBOUNCE_COUNT = 5
 
-    def __init__(self, server_address):
+    def __init__(self):
         self.__checking = False
         self.__running = False
         self.__counter = 0
         self.__zone_counter = 0
         self.__zone = 0
+        self.__joints = None
         self.__started = False
         self.__status_sub = rospy.Subscriber(
-            '/fanuc_status', FanucStatus, self.__callback, queue_size=1)
+            '/fanuc_status', FanucStatus, self.__stat_callback, queue_size=1)
+        self.__joint_sub = rospy.Subscriber(
+            '/joint_states', JointState, self.__joint_callback, queue_size=1)
 
     @property
     def zone(self):
@@ -35,7 +40,17 @@ class FanucStatusMonitor(object):
         """
         return self.__zone
 
-    def __callback(self, msg):
+    @property
+    def joints(self):
+        """Waits until joints are received, and then returns them
+        Blocks if joint state has not been received yet.
+        """
+        while not rospy.is_shutdown() and self.__joints is None:
+            rospy.sleep(0.001) # Sleep for 1 ms while waiting for joints
+        return self.__joints
+
+
+    def __stat_callback(self, msg):
         """This callback just watches zone status
         """
         self.__zone = len(np.where([msg.slowdown_zone_1_active,
@@ -45,3 +60,8 @@ class FanucStatusMonitor(object):
             self.__zone_counter += 1
         else:
             self.__zone_counter = 0
+
+    def __joint_callback(self, msg):
+        """Handles joint position updates
+        """
+        self.__joints = msg.joints

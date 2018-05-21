@@ -96,6 +96,7 @@ class HmiDriver(object):
 
             rospy.loginfo('Killed all previously running fanuc user '
                           'programs, restarting system')
+            self.__joint_setpoint_interface.joint_angles = self.__joint_angle_interface.joint_angles
             self.__io_interface.start()
 
         rospy.loginfo('Flippy controller startup complete!')

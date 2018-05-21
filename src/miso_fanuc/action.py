@@ -36,7 +36,7 @@ class ActionServer(object):
         self.__robot_comm_lock = threading.Lock()
         self.__sim = sim
         self.__traj_topic = traj_topic
-        self.__status_monitor = FanucStatusMonitor(server_address)
+        self.__status_monitor = FanucStatusMonitor()
 
         self.__server_address = server_address
 
@@ -101,6 +101,14 @@ class TrajRunner(object):
         self.send_setpoint(joints=np.array(points[-1].positions))
 
     def __update_exec_rate(self):
+        """Updates the execution rate for how fast the trajectory is stepped through.
+        This is used because the ~150ms delay in Fanuc makes it difficult to use feedback
+        for tracking a trajectory. Instead, the inputs that could cause the robot to run
+        slower are read here and used to slow down or stop the progression through the trajectory
+        sent to the robot.
+        """
+
+        #TODO(WHW): Handle E-stop event
         if self.__status_monitor.zone == 0:
             self.exec_rate += 0.1
         elif self.__status_monitor.zone > 0:
