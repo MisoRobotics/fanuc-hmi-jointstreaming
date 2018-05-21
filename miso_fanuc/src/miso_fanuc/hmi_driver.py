@@ -172,7 +172,7 @@ class HmiDriver(object):
         """
         """
         deg_joints = Point.to_robot([np.rad2deg(j) for j in req.joints])
-        rospy.logwarn("setting joints to %s", str(deg_joints))
+        rospy.logdebug("setting joints to %s", str(deg_joints))
         res = SetJointSetpointResponse()
         assert len(req.joints) == 6
         res.success = False

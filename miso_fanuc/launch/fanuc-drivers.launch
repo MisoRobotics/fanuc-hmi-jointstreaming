@@ -5,10 +5,10 @@
        the sim argument conveys endianness to the below nodes. -->
   <arg name="sim"/>
 
-  <node name="miso_fanuc_driver" pkg="miso_fanuc" type="miso_fanuc_driver">
+  <node name="miso_fanuc_driver" pkg="miso_fanuc" type="miso_fanuc_driver" output="screen">
     <param name="robot_ip" value="$(arg robot_ip)"/>
   </node>
-  <node name="miso_fanuc_hmi" pkg="miso_fanuc" type="miso_fanuc_hmi">
+  <node name="miso_fanuc_hmi" pkg="miso_fanuc" type="miso_fanuc_hmi" output="screen">
     <param name="robot_ip" value="$(arg robot_ip)"/>
   </node>
 </launch>

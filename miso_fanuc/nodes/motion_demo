@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import math
+
 from actionlib import SimpleActionClient
 from control_msgs.msg import FollowJointTrajectoryAction, \
                              FollowJointTrajectoryGoal
@@ -9,7 +11,7 @@ from miso_fanuc.status import FanucStatusMonitor
 import rospy
 
 
-def go_home_trajectory(time=10.):
+def go_home_trajectory(time=5.):
     status = FanucStatusMonitor()
     traj = JointTrajectory()
     start_point = JointTrajectoryPoint()
@@ -17,23 +19,40 @@ def go_home_trajectory(time=10.):
     start_point.time_from_start = rospy.Duration(0.)
     traj.points.append(start_point)
     end_point = JointTrajectoryPoint()
-    end_point.positions = [[0.,
+    end_point.positions = [0.,
                             0.,
                             0.,
                             0.,
                             0.,
-                            0.]]
+                            0.]
     end_point.time_from_start = rospy.Duration(time)
     traj.points.append(end_point)
     return traj
 
 def generate_trajectory(length=10., period=2.):
-    pass
+    def get_point(dt):
+        point = JointTrajectoryPoint()
+        point.positions = [math.sin(2*math.pi*dt/period),
+                           0.,
+                           0.,
+                           0.,
+                           0.,
+                           0.]
+        point.time_from_start = rospy.Duration(dt)
+        return point
+
+    points_per_second = 125.
+    traj = JointTrajectory()
+
+    for i in range(int(length*points_per_second)):
+        traj.points.append(get_point(i/points_per_second))
+    return traj
 
 def make_goal(joint_trajectory):
     goal = FollowJointTrajectoryGoal()
     joint_trajectory.header.stamp = rospy.Time.now()
     goal.trajectory = joint_trajectory
+    return goal
 
 def main():
     rospy.init_node('motion_demo')
@@ -42,6 +61,11 @@ def main():
         client = SimpleActionClient('/miso_fanuc_driver/follow_joint_trajectory',
                                     FollowJointTrajectoryAction)
         goal = make_goal(go_home_trajectory())
+        rospy.loginfo('Sending robot to home position %s', str(goal))
+        client.send_goal(goal)
+        client.wait_for_result()
+        goal = make_goal(generate_trajectory())
+        rospy.loginfo('Sending robot through J1 oscillations %s', str(goal))
         client.send_goal(goal)
         client.wait_for_result()
     except:

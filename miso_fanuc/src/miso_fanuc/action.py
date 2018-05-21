@@ -36,7 +36,7 @@ class ActionServer(object):
         self.__status_monitor = FanucStatusMonitor()
 
         self.__server_address = server_address
-
+        rospy.loginfo('Hosting trajectory action server at %s', self.__traj_topic)
         self.__trajectory_asrv = actionlib.SimpleActionServer(
             self.__traj_topic,
             FollowJointTrajectoryAction,
@@ -70,7 +70,7 @@ class TrajRunner(object):
         self.send_setpoint = rospy.ServiceProxy(svc, SetJointSetpoint)
 
     def execute_trajectory(self, goal):
-        rospy.logerr('Executing trajectory: ' + str(goal))
+        rospy.logdebug('Executing trajectory: ' + str(goal))
         param_time = 0.
         points = goal.trajectory.points
         def get_setpoint():
@@ -93,7 +93,8 @@ class TrajRunner(object):
             self.send_setpoint(joints=np.array(setpoint))
             loop_delta_time = time.time() - loop_start_time
             loop_start_time += loop_delta_time
-            assert loop_delta_time < 0.2, 'Control loop not fast enough'
+            if loop_delta_time > 0.1:
+                rospy.logwarn('Control loop is running slow (loop time %f seconds', loop_delta_time)
             param_time += self.exec_rate*loop_delta_time
             self.__update_exec_rate()
         self.send_setpoint(joints=np.array(points[-1].positions))
