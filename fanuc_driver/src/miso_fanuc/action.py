@@ -10,8 +10,8 @@ import actionlib
 from control_msgs.msg import \
     FollowJointTrajectoryAction, \
     FollowJointTrajectoryResult
-from miso_fanuc.status import FanucStatusMonitor
-from miso_msgs.srv import SetJointSetpoint
+from fanuc_driver.status import FanucStatusMonitor
+from fanuc_msgs.srv import SetJointSetpoint
 import rospy
 
 

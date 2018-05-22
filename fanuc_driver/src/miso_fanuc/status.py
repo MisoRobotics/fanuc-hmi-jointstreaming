@@ -4,8 +4,8 @@ import socket
 import rospy
 from sensor_msgs.msg import JointState
 
-from miso_fanuc import Registers
-from miso_msgs.msg import FanucStatus
+from fanuc_driver import Registers
+from fanuc_msgs.msg import FanucStatus
 
 
 class FanucStatusMonitor(object):

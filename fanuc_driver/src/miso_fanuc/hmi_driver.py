@@ -2,8 +2,8 @@ from threading import RLock
 
 import numpy as np
 
-from miso_fanuc import Registers, DigitalIO
-from miso_fanuc.hmi_engine import AlarmInterface, \
+from fanuc_driver import Registers, DigitalIO
+from fanuc_driver.hmi_engine import AlarmInterface, \
                                   DataRegisterInterface, \
                                   IOInterface, \
                                   JointAngleInterface, \
@@ -11,9 +11,9 @@ from miso_fanuc.hmi_engine import AlarmInterface, \
                                   SnpxManager, \
                                   SystemStatusInterface, \
                                   REGISTER_COUNT
-from miso_fanuc.tp import Point
-from miso_msgs.msg import FanucStatus
-from miso_msgs.srv import SetJointSetpoint, \
+from fanuc_driver.tp import Point
+from fanuc_msgs.msg import FanucStatus
+from fanuc_msgs.srv import SetJointSetpoint, \
                           SetJointSetpointResponse
 from sensor_msgs.msg import JointState
 import rospy

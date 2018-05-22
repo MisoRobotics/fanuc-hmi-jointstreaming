@@ -2,11 +2,11 @@
 
 import rospy
 
-from miso_fanuc.hmi_driver import HmiDriver
+from fanuc_driver.hmi_driver import HmiDriver
 
 
 def main():
-    rospy.init_node('miso_fanuc_hmi')
+    rospy.init_node('fanuc_driver_hmi')
     rospy.loginfo('Starting %s', rospy.get_name())
 
     server = rospy.get_param('~robot_ip')

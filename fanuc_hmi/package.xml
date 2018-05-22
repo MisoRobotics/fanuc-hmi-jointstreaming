@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>fanuc_hmi</name>
+  <version>1.0.0</version>
+  <description>The fanuc_hmi package</description>
+
+  <maintainer email="wwerst@misorobotics.com">Will Werst</maintainer>
+
+  <license>BSD</license>
+
+  <url type="repository">https://github.com/MisoRobotics/fanuc-hmi-jointstreaming.git</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>fanuc_msgs</exec_depend>
+  <exec_depend>fanuc_driver</exec_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <metapackage/>
+  </export>
+</package>

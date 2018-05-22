@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>miso_fanuc</name>
+  <name>fanuc_driver</name>
   <version>1.0.0</version>
   <description>Contains driver stack code for interfacing with Fanuc robots</description>
   <maintainer email="wwerst@misorobotics.com">Will Werst</maintainer>
@@ -12,8 +12,9 @@
   <depend>control_msgs</depend>
   <depend>rospy</depend>
   <depend>trajectory_msgs</depend>
-
+  
   <build_depend>message_generation</build_depend>
+  <build_depend>roslint</build_depend>
 
   <exec_depend>message_runtime</exec_depend>
 

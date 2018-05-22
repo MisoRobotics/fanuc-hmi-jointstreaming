@@ -5,9 +5,9 @@ from abc import ABCMeta, \
 import struct
 import time
 
-from miso_fanuc import DigitalIO
-from miso_fanuc.modbus_interface import ModbusInterface
-from miso_fanuc.alarm import FanucAlarm
+from fanuc_driver import DigitalIO
+from fanuc_driver.modbus_interface import ModbusInterface
+from fanuc_driver.alarm import FanucAlarm
 
 import rospy
 

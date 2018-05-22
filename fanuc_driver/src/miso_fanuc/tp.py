@@ -9,7 +9,7 @@ from io import BytesIO
 import math
 import numpy as np
 
-from miso_fanuc import Registers
+from fanuc_driver import Registers
 import rospy
 
 
