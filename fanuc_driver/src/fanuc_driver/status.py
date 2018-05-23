@@ -51,9 +51,10 @@ class FanucStatusMonitor(object):
     def __stat_callback(self, msg):
         """This callback just watches zone status
         """
-        self.__zone = len(np.where([msg.slowdown_zone_1_active,
-                                    msg.slowdown_zone_2_active,
-                                    msg.danger_zone_active])[0])
+        self.__zone = 0 # Disable reading of IO for demo code
+                      #len(np.where([msg.slowdown_zone_1_active,
+                      #              msg.slowdown_zone_2_active,
+                      #              msg.danger_zone_active])[0])
         if self.__zone == 0:
             self.__zone_counter += 1
         else:

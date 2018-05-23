@@ -71,28 +71,11 @@ class HmiDriver(object):
             '/send_setpoint', SetJointSetpoint, self.__set_joint_setpoint)
 
     def system_startup(self):
-        """Resets any alarms that are present, then kills all running fanuc
-        controller user programs, then sends start signal to controller
+        """Sets joint setpoint register to current joint angles
         """
-        while not rospy.is_shutdown() and not self.__check_alarms():
-            rospy.sleep(STARTUP_SLEEP_TIME)
-
-        if rospy.is_shutdown():
-            rospy.logwarn('System stopped during HMI Driver startup')
-
-        rospy.loginfo('Flippy controller is in startup!')
 
         with self.__config_lock:
-            while (not rospy.is_shutdown()
-                   and len([prog for prog in
-                            self.__system_interface.program_statuses
-                            if not prog.is_aborted]) > 0):
-                self.__io_interface.abort()
-
-            rospy.loginfo('Killed all previously running fanuc user '
-                          'programs, restarting system')
             self.__joint_setpoint_interface.joint_angles = self.__joint_angle_interface.joint_angles
-            self.__io_interface.start()
 
         rospy.loginfo('Flippy controller startup complete!')
 
