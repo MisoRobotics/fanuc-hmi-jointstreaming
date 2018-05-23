@@ -2,7 +2,7 @@ from threading import RLock
 
 import numpy as np
 
-from fanuc_driver import Registers, DigitalIO
+from fanuc_driver import DigitalIO
 from fanuc_driver.hmi_engine import AlarmInterface, \
                                     DataRegisterInterface, \
                                     IOInterface, \

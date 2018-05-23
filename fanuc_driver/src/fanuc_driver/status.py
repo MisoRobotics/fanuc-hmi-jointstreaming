@@ -4,7 +4,6 @@ import socket
 import rospy
 from sensor_msgs.msg import JointState
 
-from fanuc_driver import Registers
 from fanuc_msgs.msg import FanucStatus
 
 
