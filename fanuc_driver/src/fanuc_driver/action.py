@@ -73,6 +73,7 @@ class TrajRunner(object):
         rospy.logdebug('Executing trajectory: ' + str(goal))
         param_time = 0.
         points = goal.trajectory.points
+
         def get_setpoint():
             # TODO(WHW): Improve efficiency of this linear search...
             start_point = points[0]
@@ -108,9 +109,9 @@ class TrajRunner(object):
         sent to the robot.
         """
 
-        #TODO(WHW): Handle E-stop event
+        # TODO(WHW): Handle E-stop event
         if self.__status_monitor.zone == 0:
             self.exec_rate += 0.1
         elif self.__status_monitor.zone > 0:
             self.exec_rate -= 0.1
-        self.exec_rate = min(max(self.exec_rate, 0.),1.)
+        self.exec_rate = min(max(self.exec_rate, 0.), 1.)

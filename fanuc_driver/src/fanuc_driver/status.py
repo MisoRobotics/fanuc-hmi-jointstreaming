@@ -46,9 +46,8 @@ class FanucStatusMonitor(object):
         Blocks if joint state has not been received yet.
         """
         while not rospy.is_shutdown() and self.__joints is None:
-            rospy.sleep(0.001) # Sleep for 1 ms while waiting for joints
+            rospy.sleep(0.001)  # Sleep for 1 ms while waiting for joints
         return self.__joints
-
 
     def __stat_callback(self, msg):
         """This callback just watches zone status

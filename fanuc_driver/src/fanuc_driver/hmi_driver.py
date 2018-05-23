@@ -43,8 +43,8 @@ class HmiDriver(object):
         self.__io_interface = IOInterface()
         self.__register_interface = DataRegisterInterface(
             start_register=1, register_count=REGISTER_COUNT)
-        self.__joint_angle_interface  = JointAngleInterface()
-        self.__joint_setpoint_interface  = JointAngleInterface(var_name_prefix='PR[1]')
+        self.__joint_angle_interface = JointAngleInterface()
+        self.__joint_setpoint_interface = JointAngleInterface(var_name_prefix='PR[1]')
         self.__snpx_manager.add_interfaces([self.__alarm_interface,
                                             self.__system_interface,
                                             self.__io_interface,
@@ -52,15 +52,15 @@ class HmiDriver(object):
                                             self.__joint_angle_interface,
                                             self.__joint_setpoint_interface])
         self.__alrm_whitelist = [
-            (11, 1),    #SRVO-001 Operator Panel E-stop
-            (11, 2),    #SRVO-002 Teach Pendant E-stop
-            (11, 7),    #SRVO-007 External Emergency stops
-            (11, 403),  #SRVO-403 DCS Cart. speed limit
-            (24, 11),   #SYST-011 Failed to run task
-            (24, 34),   #SYST-034 HOLD signal from SOP/UOP is lost
-            (12, 106),  #INTP-106 (MISOMAIN, 29) Continue request failed
-            (12, 222),  #INTP-222 (RUNMISO, 3) Call program failed
-            (12, 267),  #INTP-267 (RUNMISO, 1) RUN stmt failed
+            (11, 1),    # SRVO-001 Operator Panel E-stop
+            (11, 2),    # SRVO-002 Teach Pendant E-stop
+            (11, 7),    # SRVO-007 External Emergency stops
+            (11, 403),  # SRVO-403 DCS Cart. speed limit
+            (24, 11),   # SYST-011 Failed to run task
+            (24, 34),   # SYST-034 HOLD signal from SOP/UOP is lost
+            (12, 106),  # INTP-106 (MISOMAIN, 29) Continue request failed
+            (12, 222),  # INTP-222 (RUNMISO, 3) Call program failed
+            (12, 267),  # INTP-267 (RUNMISO, 1) RUN stmt failed
             ]
         self.__last_alarms = []
         self.__spub = rospy.Publisher(
@@ -86,8 +86,7 @@ class HmiDriver(object):
             while (not rospy.is_shutdown()
                    and len([prog for prog in
                             self.__system_interface.program_statuses
-                            if not prog.is_aborted])
-                        > 0):
+                            if not prog.is_aborted]) > 0):
                 self.__io_interface.abort()
 
             rospy.loginfo('Killed all previously running fanuc user '

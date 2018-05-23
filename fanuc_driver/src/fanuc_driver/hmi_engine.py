@@ -37,9 +37,8 @@ class HMIEngine(object):
     SNPX_SIZE_SIZE = 2
     SNPX_VAR_NAME_SIZE = 40
     SNPX_MULTIPLY_SIZE = 2
-    SNPX_SIZE = SNPX_ADDRESS_SIZE + SNPX_SIZE_SIZE + \
-                SNPX_VAR_NAME_SIZE + SNPX_MULTIPLY_SIZE
-
+    SNPX_SIZE = (SNPX_ADDRESS_SIZE + SNPX_SIZE_SIZE
+                 + SNPX_VAR_NAME_SIZE + SNPX_MULTIPLY_SIZE)
 
     def __init__(self, server_ip, port):
         self.__modbus_interface = ModbusInterface(server_ip, port)
@@ -64,9 +63,10 @@ class HMIEngine(object):
 
     def read_snpx(self, index):
         snpx = SnpxReg()
-        var_name = '$SNPX_ASG['+ str(index) + '].${field}'
+        var_name = '$SNPX_ASG[' + str(index) + '].${field}'
         bootstrap_snpx = SnpxReg()
         bootstrap_snpx.address = HMIEngine.BOOTSTRAP_START
+
         def read_field(name, size, multiply=1.):
             bootstrap_snpx.size = size
             bootstrap_snpx.var_name = var_name.format(field=name)
@@ -95,7 +95,7 @@ class HMIEngine(object):
                                '0 < SNPX_ASG < {}'.format(
                                    index, HMIEngine.BOOTSTRAP_SNPX_START))
 
-        var_name = '$SNPX_ASG['+ str(index) + '].${field}'
+        var_name = '$SNPX_ASG[' + str(index) + '].${field}'
         bootstrap_snpx = SnpxReg()
         bootstrap_snpx.address = HMIEngine.BOOTSTRAP_START
 
@@ -111,16 +111,16 @@ class HMIEngine(object):
         count = 0
 
         write_field('ADDRESS',
-                    data[count : count + HMIEngine.SNPX_ADDRESS_SIZE])
+                    data[count:count + HMIEngine.SNPX_ADDRESS_SIZE])
         count += HMIEngine.SNPX_ADDRESS_SIZE
-        write_field('SIZE', data[count : count + HMIEngine.SNPX_SIZE_SIZE])
+        write_field('SIZE', data[count:count + HMIEngine.SNPX_SIZE_SIZE])
         count += HMIEngine.SNPX_SIZE_SIZE
         write_field('VAR_NAME',
-                    data[count : count + HMIEngine.SNPX_VAR_NAME_SIZE],
+                    data[count:count + HMIEngine.SNPX_VAR_NAME_SIZE],
                     multiply=-1.)
         count += HMIEngine.SNPX_VAR_NAME_SIZE
         write_field('MULTIPLY',
-                    data[count : count + HMIEngine.SNPX_MULTIPLY_SIZE],
+                    data[count:count + HMIEngine.SNPX_MULTIPLY_SIZE],
                     multiply=0.)
 
         snpx.deserialize(data)
@@ -181,7 +181,9 @@ class SnpxManager(object):
 class SnpxDataInterface(object):
     """Provides data using an SNPX register
     """
+
     __metaclass__ = ABCMeta
+
     def __init__(self):
         self.__prev_data_interface = None
         self._modbus_interface = None
@@ -411,8 +413,10 @@ class DataRegisterInterface(SnpxDataInterface):
 class IOInterface(SnpxDataInterface):
     """Provides an interface to the digital io
     """
+
     HIGH = 1
     LOW = 0
+
     def __init__(self):
         super(IOInterface, self).__init__()
         self.snpx_size = 0
@@ -439,8 +443,8 @@ class IOInterface(SnpxDataInterface):
     def abort(self):
         self.__pulse(DigitalIO.CYCLESTOP,
                      mid_transition=IOInterface.HIGH,
-                     pulse_width=0.2) # Pulse for 0.2 seconds
-                                      # to meet fanuc timing requirements
+                     pulse_width=0.2)   # Pulse for 0.2 seconds
+                                        # to meet fanuc timing requirements
 
     def start(self):
         self.__pulse(DigitalIO.CYCLESTART,
@@ -490,9 +494,9 @@ class SystemStatusInterface(SnpxDataInterface):
 
 
 class ProgramStatus(object):
-    ProgramStatusCodes = {0 : 'ABORTED',
-                          1 : 'PAUSED',
-                          2 : 'RUNNING'}
+    ProgramStatusCodes = {0: 'ABORTED',
+                          1: 'PAUSED',
+                          2: 'RUNNING'}
     def __init__(self, data):
         assert len(data) == 18, 'Data structure must be 18 bytes in length'
         self.__name = _parse_str(data[0:8])
@@ -532,7 +536,7 @@ Parent name: {parent_name}
            status=self.execution_status,
            parent_name=self.__parent_name)
 
-    __str__=__repr__
+    __str__ = __repr__
 
 
 class SnpxReg(object):
@@ -585,7 +589,8 @@ multiply: {multiply}
 # Utility functions for hmi engine
 # TODO(WHW): Change FanucAlarm class to use these utility methods
 def _parse_str(data):
-    return ''.join([chr(char // 256) + chr(char&0xFF) for char in data])
+    return ''.join([chr(char // 256) + chr(char & 0xFF) for char in data])
+
 
 def _serialize_str(data, pad_to_length=80):
     if len(data) > pad_to_length:
@@ -602,14 +607,18 @@ def _serialize_str(data, pad_to_length=80):
     assert len(res) == pad_to_length/2
     return res
 
+
 def _bytes_to_int(data):
     return struct.unpack('<i', struct.pack('<hh', data[0], data[1]))[0]
+
 
 def _int_to_bytes(data):
     return struct.unpack('<hh', struct.pack('<i', data))
 
+
 def _bytes_to_float(data):
     return struct.unpack('<f', struct.pack('<hh', data[0], data[1]))[0]
+
 
 def _float_to_bytes(data):
     return struct.unpack('<hh', struct.pack('<f', data))
