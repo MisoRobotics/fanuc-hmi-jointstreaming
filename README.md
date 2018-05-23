@@ -37,11 +37,11 @@ I implemented these mappings via a MemPort (rack 0, slot 0, start 1)
 - DI[118-120] and DI[185] should be mapped to safety scanner inputs so the system can monitor when robot is going to be halted and stop streaming.
 
 System->Config:
-7: Enable UI signals: True
-8: START for CONTINUE only: False
-9: CSTOPI for ABORT: TRUE
-10: Abort all programs by CSTOPI: True
-43: Remote/Local setup: Remote
+- 7: Enable UI signals: True
+- 8: START for CONTINUE only: False
+- 9: CSTOPI for ABORT: TRUE
+- 10: Abort all programs by CSTOPI: True
+- 43: Remote/Local setup: Remote
 
 Then setup controller to run program using Other option (defaults to PNS). Setup->Prog Select->Prog Select Mode.
 
