@@ -15,7 +15,6 @@
   <exec_depend>fanuc_msgs</exec_depend>
   <exec_depend>fanuc_driver</exec_depend>
 
-  <!-- The export tag contains other, unspecified, tags -->
   <export>
     <metapackage/>
   </export>

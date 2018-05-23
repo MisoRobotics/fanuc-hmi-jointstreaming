@@ -4,17 +4,17 @@ import numpy as np
 
 from fanuc_driver import Registers, DigitalIO
 from fanuc_driver.hmi_engine import AlarmInterface, \
-                                  DataRegisterInterface, \
-                                  IOInterface, \
-                                  JointAngleInterface, \
-                                  JointTorqueInterface, \
-                                  SnpxManager, \
-                                  SystemStatusInterface, \
-                                  REGISTER_COUNT
+                                    DataRegisterInterface, \
+                                    IOInterface, \
+                                    JointAngleInterface, \
+                                    JointTorqueInterface, \
+                                    SnpxManager, \
+                                    SystemStatusInterface, \
+                                    REGISTER_COUNT
 from fanuc_driver.tp import Point
 from fanuc_msgs.msg import FanucStatus
 from fanuc_msgs.srv import SetJointSetpoint, \
-                          SetJointSetpointResponse
+                           SetJointSetpointResponse
 from sensor_msgs.msg import JointState
 import rospy
 
