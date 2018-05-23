@@ -38,11 +38,11 @@ I implemented these mappings via a MemPort (rack 0, slot 0, start 1)
 
 
 ## Demo
-Launch the system using `roslaunch miso_fanuc fanuc-drivers.launch robot_ip:=<IP address>`
+Launch the system using `roslaunch fanuc_driver fanuc-drivers.launch robot_ip:=<IP address>`
 
 After the system launches, there is a demo script that demonstrates position streaming.
 The script first moves a 6-axis robot to [0, 0, 0, 0, 0, 0], and then moves J1 in a sine wave pattern for 10 seconds.
-Run the motion demo script using `rosrun miso_fanuc motion_demo`
+Run the motion demo script using `rosrun fanuc_driver motion_demo`
 
 ## Notes
 This is an alpha implementation of joint position streaming using HMI, thus it is lacking in some features that would be needed

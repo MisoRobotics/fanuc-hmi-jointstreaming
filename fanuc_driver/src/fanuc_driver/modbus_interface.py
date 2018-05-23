@@ -31,7 +31,7 @@ class ModbusInterface(object):
             while not rospy.is_shutdown():
                 try:
                     self.__modbus_socket = socket.socket(socket.AF_INET,
-                                                  socket.SOCK_STREAM)
+                                                         socket.SOCK_STREAM)
                     self.__modbus_socket.settimeout(self.__socket_timeout)
                     self.__modbus_socket.connect((self.__address, self.__port))
                     rospy.loginfo('Successfully connected to modbus')

@@ -74,7 +74,7 @@ class FanucAlarm(object):
         returns. The bytes in each short are out of order,
         but the shorts are in order.
         """
-        #TODO(WHW): Use the utility functions defined at the bottom
+        # TODO(WHW): Use the utility functions defined at the bottom
         # of hmi_engine.py
         alm_msg = ''
         for chars in data:

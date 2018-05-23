@@ -1,23 +1,21 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>miso_fanuc</name>
+  <name>fanuc_hmi</name>
   <version>1.0.0</version>
-  <description>Contains driver stack code for interfacing with Fanuc robots</description>
+  <description>The fanuc_hmi package</description>
+
   <maintainer email="wwerst@misorobotics.com">Will Werst</maintainer>
+
   <license>BSD</license>
+
   <url type="repository">https://github.com/MisoRobotics/fanuc-hmi-jointstreaming.git</url>
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>control_msgs</depend>
-  <depend>rospy</depend>
-  <depend>trajectory_msgs</depend>
-
-  <build_depend>message_generation</build_depend>
-
-  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>fanuc_msgs</exec_depend>
+  <exec_depend>fanuc_driver</exec_depend>
 
   <export>
-    <architecture_independent/>
+    <metapackage/>
   </export>
 </package>
