@@ -9,14 +9,15 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>control_msgs</depend>
-  <depend>rospy</depend>
-  <depend>trajectory_msgs</depend>
-
   <build_depend>message_generation</build_depend>
   <build_depend>roslint</build_depend>
 
+  <exec_depend>control_msgs</exec_depend>
   <exec_depend>message_runtime</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
+
+  <test_depend>roslaunch</test_depend>
 
   <export>
     <architecture_independent/>

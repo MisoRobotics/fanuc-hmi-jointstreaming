@@ -79,15 +79,15 @@ class FanucAlarm(object):
 
     def __eq__(self, other):
         if isinstance(other, FanucAlarm):
-            return (other.alarm_id == self.alarm_id
-                    and other.alarm_num == self.alarm_num
-                    and other.alarm_id_cause == self.alarm_id_cause
-                    and other.alarm_num_cause == self.alarm_num_cause
-                    and other.alarm_severity == self.alarm_severity
-                    and other.alarm_msg == self.alarm_msg
-                    and other.alarm_cause_msg == self.alarm_cause_msg
-                    and other.alarm_severity_word == self.alarm_severity_word
-                    and other.time == self.time)
+            return (other.alarm_id == self.alarm_id and
+                    other.alarm_num == self.alarm_num and
+                    other.alarm_id_cause == self.alarm_id_cause and
+                    other.alarm_num_cause == self.alarm_num_cause and
+                    other.alarm_severity == self.alarm_severity and
+                    other.alarm_msg == self.alarm_msg and
+                    other.alarm_cause_msg == self.alarm_cause_msg and
+                    other.alarm_severity_word == self.alarm_severity_word and
+                    other.time == self.time)
         return NotImplemented
 
     def __ne__(self, other):

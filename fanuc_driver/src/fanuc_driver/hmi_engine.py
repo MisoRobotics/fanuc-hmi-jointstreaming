@@ -35,8 +35,8 @@ class HMIEngine(object):
     SNPX_SIZE_SIZE = 2
     SNPX_VAR_NAME_SIZE = 40
     SNPX_MULTIPLY_SIZE = 2
-    SNPX_SIZE = (SNPX_ADDRESS_SIZE + SNPX_SIZE_SIZE
-                 + SNPX_VAR_NAME_SIZE + SNPX_MULTIPLY_SIZE)
+    SNPX_SIZE = (SNPX_ADDRESS_SIZE + SNPX_SIZE_SIZE +
+                 SNPX_VAR_NAME_SIZE + SNPX_MULTIPLY_SIZE)
 
     def __init__(self, server_ip, port):
         self.__modbus_interface = ModbusInterface(server_ip, port)
@@ -441,23 +441,20 @@ class IOInterface(SnpxDataInterface):
         self._modbus_interface.write_coil(output, start_end_level)
         time.sleep(pulse_width)
 
-    def abort(self):
-        self.__pulse(DigitalIO.CYCLESTOP,
+    def __quick_pulse(self, output):
+        """Pulse for 0.2 seconds to meet fanuc timing requirements."""
+        self.__pulse(output,
                      mid_transition=IOInterface.HIGH,
-                     pulse_width=0.2)   # Pulse for 0.2 seconds
-                                        # to meet fanuc timing requirements
+                     pulse_width=0.2)
+
+    def abort(self):
+        self.__quick_pulse(DigitalIO.CYCLESTOP)
 
     def start(self):
-        self.__pulse(DigitalIO.CYCLESTART,
-                     mid_transition=IOInterface.HIGH,
-                     pulse_width=0.2) # Pulse for 0.2 seconds
-                                      # to meet fanuc timing requirements
+        self.__quick_pulse(DigitalIO.CYCLESTOP)
 
     def reset(self):
-        self.__pulse(DigitalIO.RESET,
-                     mid_transition=IOInterface.HIGH,
-                     pulse_width=0.2) # Pulse for 0.2 seconds
-                                      # to meet fanuc timing requirements
+        self.__quick_pulse(DigitalIO.RESET)
 
     def read_digital_input(self, address):
         return self._modbus_interface.read_discrete_inputs(address, 1)[0]
@@ -517,8 +514,7 @@ class ProgramStatus(object):
 
     @property
     def is_aborted(self):
-        return (ProgramStatus.ProgramStatusCodes[self.__execution_status]
-                == 'ABORTED')
+        return self.execution_status == 'ABORTED'
 
     @property
     def line_number(self):
@@ -566,10 +562,10 @@ class SnpxReg(object):
 
     def __eq__(self, other):
         if isinstance(other, SnpxReg):
-            return (self.address == other.address
-                    and self.size == other.size
-                    and self.var_name.strip('\0') == other.var_name.strip('\0')
-                    and self.multiply == other.multiply)
+            return (self.address == other.address and
+                    self.size == other.size and
+                    self.var_name.strip('\0') == other.var_name.strip('\0') and
+                    self.multiply == other.multiply)
         return NotImplemented
 
     def __ne__(self, other):

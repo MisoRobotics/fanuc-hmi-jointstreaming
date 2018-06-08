@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="robot_ip" default="foo" />
+  <include file="$(find fanuc_driver)/launch/fanuc-drivers.launch">
+    <arg name="robot_ip" value="$(arg robot_ip)" />
+  </include>
+</launch>
