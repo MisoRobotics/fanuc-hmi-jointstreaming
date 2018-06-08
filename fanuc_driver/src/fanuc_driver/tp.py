@@ -1,15 +1,10 @@
-'''
-Converts trajectories to TP .ls format.
-'''
+"""Converts trajectories to TP .ls format.
+"""
 
 from __future__ import print_function
 
-import ftplib
-from io import BytesIO
 import math
 import numpy as np
-
-import rospy
 
 
 class Point(object):
