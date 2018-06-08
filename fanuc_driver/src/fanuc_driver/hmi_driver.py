@@ -18,7 +18,6 @@ from fanuc_msgs.srv import SetJointSetpoint, \
 from sensor_msgs.msg import JointState
 import rospy
 
-
 NUM_ALARMS = 10
 NUM_PROGRAMS = 20
 START_REGISTER = 1
@@ -70,7 +69,7 @@ class HmiDriver(object):
         self.__jpub = rospy.Publisher(
             '/joint_states', JointState, queue_size=1)
         self.__set_joint_srv = rospy.Service(
-            '/send_setpoint', SetJointSetpoint, self.__set_joint_setpoint)
+            '/send_setpoint', SetJointSetpoint, self.set_joint_setpoint)
 
     def system_startup(self):
         """Resets any alarms that are present, then kills all running fanuc
@@ -165,22 +164,24 @@ class HmiDriver(object):
             joints = self.__joint_angle_interface.joint_angles
         joints = Point.to_canonical([np.deg2rad(joint) for joint in joints])
         assert len(joints) == NO_JOINTS, (
-            'Only %d joints are supported' % NO_JOINTS)
+            'Only %d joints are supported.' % NO_JOINTS)
         msg = JointState()
         msg.header.stamp = rospy.Time.now()
         msg.name = ['joint_%d' % (i + 1) for i in range(NO_JOINTS)]
         msg.position = joints
         return msg
 
-    def __set_joint_setpoint(self, req):
-        """
-        """
-        deg_joints = Point.to_robot([np.rad2deg(j) for j in req.joints])
-        rospy.logdebug("setting joints to %s", str(deg_joints))
-        res = SetJointSetpointResponse()
-        assert len(req.joints) == 6
-        res.success = False
+    def set_joint_setpoint(self, joints):
+        assert len(joints) == 6
+        deg_joints = Point.to_robot([np.rad2deg(j) for j in joints])
+        rospy.logdebug('Setting joints to %s.', deg_joints)
         with self.__config_lock:
             self.__joint_setpoint_interface.joint_angles = deg_joints
-        res.success = True
+        return True
+
+    def __set_joint_setpoint(self, req):
+        """Handles a service call for setting joint setpoint.
+        """
+        succes = self.set_joint_setpoint(req.joint)
+        res = SetJointSetpointResponse(success=success)
         return res

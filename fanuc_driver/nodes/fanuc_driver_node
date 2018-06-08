@@ -3,21 +3,28 @@
 import rospy
 
 from fanuc_driver.action import ActionServer
+from fanuc_driver.hmi_driver import HmiDriver
 
 
 def main():
-    rospy.init_node('fanuc_driver_node')
+    rospy.init_node('fanuc_driver_node', log_level=rospy.DEBUG)
     rospy.loginfo('Starting %s', rospy.get_name())
 
     server = rospy.get_param('~robot_ip')
     assert isinstance(server, str)
 
     traj_topic = '%s/follow_joint_trajectory' % rospy.get_name()
+
+    hmi_driver = HmiDriver(server)
+
     try:
+        hmi_driver.system_startup()
         action_server = ActionServer(
             traj_topic=traj_topic,
-            server_address=server)
-        rospy.spin()
+            server_address=server,
+            hmi_driver=hmi_driver)
+        while not rospy.is_shutdown():
+            hmi_driver.spin()
     except:
         if not rospy.is_shutdown():
             raise

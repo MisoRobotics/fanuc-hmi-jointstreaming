@@ -4,7 +4,4 @@
   <node name="fanuc_driver_node" pkg="fanuc_driver" type="fanuc_driver_node" output="screen">
     <param name="robot_ip" value="$(arg robot_ip)"/>
   </node>
-  <node name="fanuc_hmi_node" pkg="fanuc_driver" type="fanuc_hmi_node" output="screen">
-    <param name="robot_ip" value="$(arg robot_ip)"/>
-  </node>
 </launch>

@@ -21,7 +21,8 @@ class ActionServer(object):
     def __init__(self,
                  traj_topic,
                  server_address,
-                 buffer_size=5):
+                 buffer_size=5,
+                 hmi_driver=None):
         assert isinstance(traj_topic, str)
         assert isinstance(server_address, str)
         assert isinstance(buffer_size, int)
@@ -31,6 +32,7 @@ class ActionServer(object):
         self.__robot_comm_lock = threading.Lock()
         self.__traj_topic = traj_topic
         self.__status_monitor = FanucStatusMonitor()
+        self.__hmi_driver = hmi_driver
 
         self.__server_address = server_address
         rospy.loginfo('Hosting trajectory action server at %s',
@@ -48,7 +50,7 @@ class ActionServer(object):
             return
         self.__robot_comm_lock.acquire()
         try:
-            traj_runner = TrajRunner(self.__status_monitor)
+            traj_runner = TrajRunner(self.__status_monitor, self.__hmi_driver)
 
             traj_runner.execute_trajectory(goal)
             self.__trajectory_asrv.set_succeeded()
@@ -60,12 +62,16 @@ class TrajRunner(object):
     """Executes a trajectory by interpolating along a path,
     and slowing down execution when warning zones are observed
     """
-    def __init__(self, status_monitor):
+    def __init__(self, status_monitor, hmi_driver):
         self.__status_monitor = status_monitor
+        self.__hmi_driver = hmi_driver
         self.exec_rate = 1. if status_monitor.zone == 0 else 0.
-        svc = '/send_setpoint'
-        rospy.wait_for_service(svc)
-        self.send_setpoint = rospy.ServiceProxy(svc, SetJointSetpoint)
+        if self.__hmi_driver:
+            self.send_setpoint = self.__hmi_driver.set_joint_setpoint
+        else:
+            svc = '/send_setpoint'
+            rospy.wait_for_service(svc)
+            self.send_setpoint = rospy.ServiceProxy(svc, SetJointSetpoint)
 
     def execute_trajectory(self, goal):
         rospy.logdebug('Executing trajectory: ' + str(goal))

@@ -31,6 +31,7 @@ def go_home_trajectory(time=5.):
 
 
 def generate_trajectory(length=10., period=2.):
+
     def get_point(dt):
         point = JointTrajectoryPoint()
         point.positions = [0.5*math.sin(2*math.pi*dt/period),
@@ -66,13 +67,14 @@ def main():
             FollowJointTrajectoryAction)
         client.wait_for_server()
         goal = make_goal(go_home_trajectory())
-        rospy.loginfo('Sending robot to home position %s', str(goal))
+        # rospy.loginfo('Sending robot to home position %s', str(goal))
         client.send_goal(goal)
         client.wait_for_result()
         goal = make_goal(generate_trajectory(period=2))
-        rospy.loginfo('Sending robot through J1 oscillations %s', str(goal))
-        client.send_goal(goal)
-        client.wait_for_result()
+        # rospy.loginfo('Sending robot through J1 oscillations %s', str(goal))
+        while not rospy.is_shutdown():
+            client.send_goal(goal)
+            client.wait_for_result()
     except:
         if not rospy.is_shutdown():
             raise
