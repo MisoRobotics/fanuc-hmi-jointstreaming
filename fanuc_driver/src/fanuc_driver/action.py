@@ -1,6 +1,3 @@
-from enum import Enum
-import ftplib
-from io import BytesIO
 import threading
 import time
 
@@ -36,7 +33,8 @@ class ActionServer(object):
         self.__status_monitor = FanucStatusMonitor()
 
         self.__server_address = server_address
-        rospy.loginfo('Hosting trajectory action server at %s', self.__traj_topic)
+        rospy.loginfo('Hosting trajectory action server at %s',
+                      self.__traj_topic)
         self.__trajectory_asrv = actionlib.SimpleActionServer(
             self.__traj_topic,
             FollowJointTrajectoryAction,
@@ -78,17 +76,20 @@ class TrajRunner(object):
             # TODO(WHW): Improve efficiency of this linear search...
             start_point = points[0]
             end_point = points[-1]
-            for i in range(len(points)):
-                if points[i].time_from_start.to_sec() < param_time:
-                    start_point = points[i]
+            for point in points:
+                if point.time_from_start.to_sec() < param_time:
+                    start_point = point
                 else:
-                    end_point = points[i]
-            dt = end_point.time_from_start.to_sec() - start_point.time_from_start.to_sec()
+                    end_point = point
+            dt = (end_point.time_from_start.to_sec() -
+                  start_point.time_from_start.to_sec())
             if dt == 0.:
                 prop_end = 1.
             else:
-                prop_end = (param_time - start_point.time_from_start.to_sec()) / dt
-            return np.array(start_point.positions)*(1-prop_end) + np.array(end_point.positions)*prop_end
+                prop_end = (
+                    param_time - start_point.time_from_start.to_sec()) / dt
+            return (np.array(start_point.positions)*(1-prop_end) +
+                    np.array(end_point.positions)*prop_end)
         loop_start_time = time.time()
         while param_time < points[-1].time_from_start.to_sec():
             setpoint = get_setpoint()
@@ -96,17 +97,21 @@ class TrajRunner(object):
             loop_delta_time = time.time() - loop_start_time
             loop_start_time += loop_delta_time
             if loop_delta_time > 0.05:
-                rospy.logwarn('Control loop is running slow (loop time %f seconds', loop_delta_time)
+                rospy.logwarn('Control loop is running slow (loop time %f '
+                              'seconds', loop_delta_time)
             param_time += self.exec_rate*loop_delta_time
             self.__update_exec_rate()
         self.send_setpoint(joints=np.array(points[-1].positions))
 
     def __update_exec_rate(self):
-        """Updates the execution rate for how fast the trajectory is stepped through.
-        This is used because the ~150ms delay in Fanuc makes it difficult to use feedback
-        for tracking a trajectory. Instead, the inputs that could cause the robot to run
-        slower are read here and used to slow down or stop the progression through the trajectory
-        sent to the robot.
+        """Updates the execution rate for how fast the trajectory is
+        stepped through.
+
+        This is used because the ~150ms delay in Fanuc makes it
+        difficult to use feedback for tracking a trajectory. Instead,
+        the inputs that could cause the robot to run slower are read
+        here and used to slow down or stop the progression through the
+        trajectory sent to the robot.
         """
 
         # TODO(WHW): Handle E-stop event

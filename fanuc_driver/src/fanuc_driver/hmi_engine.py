@@ -1,7 +1,5 @@
-#!/usr/bin/env python
-from abc import ABCMeta, \
-                abstractmethod, \
-                abstractproperty
+from abc import (ABCMeta,
+                 abstractproperty)
 import struct
 import time
 
@@ -273,9 +271,9 @@ class JointAngleInterface(SnpxDataInterface):
     @joint_angles.setter
     def joint_angles(self, value):
         start_address = self.snpx_start_address
-        size = self.snpx_size
         if len(value) != NUM_JOINTS:
-            raise ValueError('Joint angles must be a list of length %d' % NUM_JOINTS)
+            raise ValueError('Joint angles must be a list of length %d'
+                             % NUM_JOINTS)
         joint_bytes = []
         for j in value:
             joint_bytes.extend(_float_to_bytes(j))
@@ -298,6 +296,7 @@ class JointAngleInterface(SnpxDataInterface):
 class JointTorqueInterface(SnpxDataInterface):
     """Provides the joint torques of the robot
     """
+
     def __init__(self):
         super(JointTorqueInterface, self).__init__()
         self.snpx_size = 12
@@ -326,6 +325,7 @@ class JointTorqueInterface(SnpxDataInterface):
 class AlarmInterface(SnpxDataInterface):
     """Provides the alarms on the robot
     """
+
     def __init__(self,
                  num_alarms):
         super(AlarmInterface, self).__init__()
@@ -362,6 +362,7 @@ class AlarmInterface(SnpxDataInterface):
 class DataRegisterInterface(SnpxDataInterface):
     """Provides an interface to write Fanuc registers
     """
+
     def __init__(self,
                  start_register,
                  register_count):
@@ -374,7 +375,8 @@ class DataRegisterInterface(SnpxDataInterface):
         if not (1 <= start_register + register_count - 1 <= REGISTER_COUNT):
             raise ValueError('End register [%d] is outside of Fanuc '
                              'register count (1 <= register <= %d)' %
-                             (start_register + register_count - 1, REGISTER_COUNT))
+                             (start_register + register_count - 1,
+                              REGISTER_COUNT))
 
         self.__start_register = start_register
         self.__register_count = register_count
@@ -413,7 +415,6 @@ class DataRegisterInterface(SnpxDataInterface):
 class IOInterface(SnpxDataInterface):
     """Provides an interface to the digital io
     """
-
     HIGH = 1
     LOW = 0
 
@@ -466,6 +467,7 @@ class SystemStatusInterface(SnpxDataInterface):
     """Provides an interface to the Fanuc controller to stop and start
     the software
     """
+
     def __init__(self,
                  num_programs):
         super(SystemStatusInterface, self).__init__()
@@ -497,6 +499,7 @@ class ProgramStatus(object):
     ProgramStatusCodes = {0: 'ABORTED',
                           1: 'PAUSED',
                           2: 'RUNNING'}
+
     def __init__(self, data):
         assert len(data) == 18, 'Data structure must be 18 bytes in length'
         self.__name = _parse_str(data[0:8])
@@ -540,8 +543,7 @@ Parent name: {parent_name}
 
 
 class SnpxReg(object):
-    """
-    """
+
     def __init__(self, address=None, size=None, var_name=None, multiply=None):
         self.address = address
         self.size = size
@@ -596,11 +598,11 @@ def _serialize_str(data, pad_to_length=80):
     if len(data) > pad_to_length:
         raise ValueError('string is too long')
     res = []
-    for i in range(len(data)):
+    for i, datum in enumerate(data):
         if i % 2 == 0:
-            res.append(ord(data[i]) << 8)
+            res.append(ord(datum) << 8)
         else:
-            res[-1] += ord(data[i])
+            res[-1] += ord(datum)
     # Pad the result to be padding_length elements long
     while len(res) < pad_to_length / 2:
         res.append(0)

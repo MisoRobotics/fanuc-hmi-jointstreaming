@@ -20,14 +20,15 @@ def go_home_trajectory(time=5.):
     traj.points.append(start_point)
     end_point = JointTrajectoryPoint()
     end_point.positions = [0.,
-                            0.,
-                            0.,
-                            0.,
-                            0.,
-                            0.]
+                           0.,
+                           0.,
+                           0.,
+                           0.,
+                           0.]
     end_point.time_from_start = rospy.Duration(time)
     traj.points.append(end_point)
     return traj
+
 
 def generate_trajectory(length=10., period=2.):
     def get_point(dt):
@@ -48,18 +49,21 @@ def generate_trajectory(length=10., period=2.):
         traj.points.append(get_point(i/points_per_second))
     return traj
 
+
 def make_goal(joint_trajectory):
     goal = FollowJointTrajectoryGoal()
     joint_trajectory.header.stamp = rospy.Time.now()
     goal.trajectory = joint_trajectory
     return goal
 
+
 def main():
     rospy.init_node('motion_demo')
     rospy.loginfo('Starting %s', rospy.get_name())
     try:
-        client = SimpleActionClient('/fanuc_driver_node/follow_joint_trajectory',
-                                    FollowJointTrajectoryAction)
+        client = SimpleActionClient(
+            '/fanuc_driver_node/follow_joint_trajectory',
+            FollowJointTrajectoryAction)
         client.wait_for_server()
         goal = make_goal(go_home_trajectory())
         rospy.loginfo('Sending robot to home position %s', str(goal))
@@ -72,6 +76,7 @@ def main():
     except:
         if not rospy.is_shutdown():
             raise
+
 
 if __name__ == '__main__':
     main()

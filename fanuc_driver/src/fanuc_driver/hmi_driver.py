@@ -32,6 +32,7 @@ class HmiDriver(object):
     controller, configuring the controller HMI settings via bootstrap
     registers, reading digital IO, and reading signaling registers.
     """
+
     def __init__(self, server):
         # Used to lock across robot transactions that need to be atomic
         self.__config_lock = RLock()
@@ -44,7 +45,8 @@ class HmiDriver(object):
         self.__register_interface = DataRegisterInterface(
             start_register=1, register_count=REGISTER_COUNT)
         self.__joint_angle_interface = JointAngleInterface()
-        self.__joint_setpoint_interface = JointAngleInterface(var_name_prefix='PR[1]')
+        self.__joint_setpoint_interface = JointAngleInterface(
+            var_name_prefix='PR[1]')
         self.__snpx_manager.add_interfaces([self.__alarm_interface,
                                             self.__system_interface,
                                             self.__io_interface,
@@ -91,7 +93,8 @@ class HmiDriver(object):
 
             rospy.loginfo('Killed all previously running fanuc user '
                           'programs, restarting system')
-            self.__joint_setpoint_interface.joint_angles = self.__joint_angle_interface.joint_angles
+            self.__joint_setpoint_interface.joint_angles = (
+                self.__joint_angle_interface.joint_angles)
             self.__io_interface.start()
 
         rospy.loginfo('Flippy controller startup complete!')
@@ -142,10 +145,11 @@ class HmiDriver(object):
         """Gets the fanuc status message
         """
         with self.__config_lock:
-            pneumatic_pressure_low = self.__io_interface.read_digital_input(DigitalIO.PNEUMGOOD) == 0
-            slowdown_zone_1_active = self.__io_interface.read_digital_input(DigitalIO.WARN1) == 0
-            slowdown_zone_2_active = self.__io_interface.read_digital_input(DigitalIO.WARN2) == 0
-            danger_zone_active = self.__io_interface.read_digital_input(DigitalIO.SIR1) == 0
+            read_input = self.__io_interface.read_digital_input
+            pneumatic_pressure_low = read_input(DigitalIO.PNEUMGOOD) == 0
+            slowdown_zone_1_active = read_input(DigitalIO.WARN1) == 0
+            slowdown_zone_2_active = read_input(DigitalIO.WARN2) == 0
+            danger_zone_active = read_input(DigitalIO.SIR1) == 0
         msg = FanucStatus(
             slowdown_zone_1_active=slowdown_zone_1_active,
             slowdown_zone_2_active=slowdown_zone_2_active,
@@ -160,7 +164,8 @@ class HmiDriver(object):
         with self.__config_lock:
             joints = self.__joint_angle_interface.joint_angles
         joints = Point.to_canonical([np.deg2rad(joint) for joint in joints])
-        assert len(joints) == NO_JOINTS, 'Only %d joints are supported' % NO_JOINTS
+        assert len(joints) == NO_JOINTS, (
+            'Only %d joints are supported' % NO_JOINTS)
         msg = JointState()
         msg.header.stamp = rospy.Time.now()
         msg.name = ['joint_%d' % (i + 1) for i in range(NO_JOINTS)]

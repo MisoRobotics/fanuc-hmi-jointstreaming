@@ -5,13 +5,6 @@ This implementation is based off of SNP and this paper:
 https://www.sciencedirect.com/science/article/pii/S1742287617301925
 """
 import datetime
-from enum import Enum
-import errno
-import numpy as np
-import time
-
-import rospy
-
 
 ALARM_SIZE = 100
 
@@ -19,6 +12,7 @@ ALARM_SIZE = 100
 class FanucAlarm(object):
     """Parses an alarm retrieved via HMI.
     """
+
     def __init__(self, data):
         assert len(data) == ALARM_SIZE, 'Alarm is not correct size'
         self.alarm_id = data[0]
