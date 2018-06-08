@@ -85,10 +85,10 @@ class HmiDriver(object):
         rospy.loginfo('Flippy controller is in startup!')
 
         with self.__config_lock:
-            while (not rospy.is_shutdown()
-                   and len([prog for prog in
-                            self.__system_interface.program_statuses
-                            if not prog.is_aborted]) > 0):
+            while (not rospy.is_shutdown() and
+                   len([prog for prog in
+                        self.__system_interface.program_statuses
+                        if not prog.is_aborted]) > 0):
                 self.__io_interface.abort()
 
             rospy.loginfo('Killed all previously running fanuc user '

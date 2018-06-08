@@ -1,10 +1,6 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="robot_ip"/>
-  <!-- The ROBOGUIDE simulator uses little endian where as the controller uses big endian so
-       the sim argument conveys endianness to the below nodes. -->
-  <arg name="sim"/>
-
   <node name="fanuc_driver_node" pkg="fanuc_driver" type="fanuc_driver_node" output="screen">
     <param name="robot_ip" value="$(arg robot_ip)"/>
   </node>
@@ -12,4 +8,3 @@
     <param name="robot_ip" value="$(arg robot_ip)"/>
   </node>
 </launch>
-
